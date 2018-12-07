@@ -40,6 +40,7 @@ class Client {
 
   final ConnectionFactory connectionFactory;
   final String writeKey;
+  final String trackEndPoint;
 
   private static Connection createPostConnection(HttpURLConnection connection) throws IOException {
     final OutputStream outputStream;
@@ -82,13 +83,14 @@ class Client {
     };
   }
 
-  Client(String writeKey, ConnectionFactory connectionFactory) {
+  Client(String writeKey, String trackEndPoint, ConnectionFactory connectionFactory) {
     this.writeKey = writeKey;
+    this.trackEndPoint = trackEndPoint;
     this.connectionFactory = connectionFactory;
   }
 
   Connection upload() throws IOException {
-    HttpURLConnection connection = connectionFactory.upload(writeKey);
+    HttpURLConnection connection = connectionFactory.upload(writeKey, trackEndPoint);
     return createPostConnection(connection);
   }
 

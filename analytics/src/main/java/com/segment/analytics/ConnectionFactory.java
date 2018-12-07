@@ -52,8 +52,8 @@ public class ConnectionFactory {
    * Return a {@link HttpURLConnection} that writes batched payloads to {@code
    * https://api.segment.io/v1/import}.
    */
-  public HttpURLConnection upload(String writeKey) throws IOException {
-    HttpURLConnection connection = openConnection("https://api.segment.io/v1/import");
+  public HttpURLConnection upload(String writeKey, String endpoint) throws IOException {
+    HttpURLConnection connection = openConnection(endpoint);
     connection.setRequestProperty("Authorization", authorizationHeader(writeKey));
     connection.setRequestProperty("Content-Encoding", "gzip");
     connection.setDoOutput(true);

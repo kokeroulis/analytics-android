@@ -160,7 +160,7 @@ public class Analytics {
    * <p>By default, events are uploaded every 30 seconds, or every 20 events (whichever occurs
    * first), and debugging is disabled.
    */
-  public static Analytics with(Context context) {
+  public static Analytics with(Context context, String trackEndpoint) {
     if (singleton == null) {
       if (context == null) {
         throw new IllegalArgumentException("Context must not be null.");
@@ -168,7 +168,7 @@ public class Analytics {
       synchronized (Analytics.class) {
         if (singleton == null) {
           String writeKey = getResourceString(context, WRITE_KEY_RESOURCE_IDENTIFIER);
-          Builder builder = new Builder(context, writeKey);
+          Builder builder = new Builder(context, writeKey, trackEndpoint);
 
           try {
             String packageName = context.getPackageName();
@@ -1074,6 +1074,7 @@ public class Analytics {
 
     private final Application application;
     private String writeKey;
+    private String trackEndPoint;
     private boolean collectDeviceID = Utils.DEFAULT_COLLECT_DEVICE_ID;
     private int flushQueueSize = Utils.DEFAULT_FLUSH_QUEUE_SIZE;
     private long flushIntervalInMillis = Utils.DEFAULT_FLUSH_INTERVAL;
@@ -1091,7 +1092,7 @@ public class Analytics {
     private Crypto crypto;
 
     /** Start building a new {@link Analytics} instance. */
-    public Builder(Context context, String writeKey) {
+    public Builder(Context context, String writeKey, String trackEndPoint) {
       if (context == null) {
         throw new IllegalArgumentException("Context must not be null.");
       }
@@ -1107,6 +1108,7 @@ public class Analytics {
         throw new IllegalArgumentException("writeKey must not be null or empty.");
       }
       this.writeKey = writeKey;
+      this.trackEndPoint = trackEndPoint;
     }
 
     /**
@@ -1331,7 +1333,7 @@ public class Analytics {
 
       final Stats stats = new Stats();
       final Cartographer cartographer = Cartographer.INSTANCE;
-      final Client client = new Client(writeKey, connectionFactory);
+      final Client client = new Client(writeKey, trackEndPoint, connectionFactory);
 
       ProjectSettings.Cache projectSettingsCache =
           new ProjectSettings.Cache(application, cartographer, tag);
