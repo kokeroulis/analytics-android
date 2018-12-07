@@ -34,11 +34,11 @@ android {
     targetCompatibility rootProject.ext.targetCompatibilityVersion
   }
 
-  lintOptions {
-    textReport true
-    textOutput 'stdout'
-    disable 'InvalidPackage', 'GradleCompatible'
-  }
+//  lintOptions {
+//    textReport true
+//    textOutput 'stdout'
+//    disable 'InvalidPackage', 'GradleCompatible'
+//  }
 }
 
 spotless {
