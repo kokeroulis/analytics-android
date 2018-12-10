@@ -47,9 +47,10 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 18, manifest = Config.NONE)
+@Config(constants = BuildConfig.class, sdk = 21, manifest = Config.NONE)
 public class AnalyticsBuilderTest {
 
+  final static String TRACK_ENDPOINT = "https://wwww.customtrackendpoint.com/tracks";
   private Application context;
 
   @Before
@@ -63,7 +64,7 @@ public class AnalyticsBuilderTest {
   @Test
   public void invalidContextThrowsException() throws Exception {
     try {
-      new Builder(null, null);
+      new Builder(null, null, null);
       fail("Null context should throw exception.");
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage("Context must not be null.");
@@ -71,7 +72,7 @@ public class AnalyticsBuilderTest {
 
     when(context.checkCallingOrSelfPermission(INTERNET)).thenReturn(PERMISSION_DENIED);
     try {
-      new Builder(context, "foo");
+      new Builder(context, "foo", TRACK_ENDPOINT);
       fail("Missing internet permission should throw exception.");
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage("INTERNET permission is required.");
@@ -81,7 +82,7 @@ public class AnalyticsBuilderTest {
   @Test
   public void invalidExecutorThrowsException() throws Exception {
     try {
-      new Builder(context, "foo").networkExecutor(null);
+      new Builder(context, "foo", TRACK_ENDPOINT).networkExecutor(null);
       fail("Null executor should throw exception.");
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage("Executor service must not be null.");
@@ -91,7 +92,7 @@ public class AnalyticsBuilderTest {
   @Test
   public void invalidMiddlewareThrowsException() throws Exception {
     try {
-      new Builder(context, "foo").middleware(null);
+      new Builder(context, "foo", TRACK_ENDPOINT).middleware(null);
       fail("Null middleware should throw exception.");
     } catch (NullPointerException expected) {
       assertThat(expected).hasMessage("middleware == null");
@@ -105,7 +106,7 @@ public class AnalyticsBuilderTest {
               throw new AssertionError("should not be invoked");
             }
           };
-      new Builder(context, "foo").middleware(middleware).middleware(middleware);
+      new Builder(context, "foo", TRACK_ENDPOINT).middleware(middleware).middleware(middleware);
       fail("Registering middleware twice throw exception.");
     } catch (IllegalStateException expected) {
       assertThat(expected).hasMessage("Middleware is already registered.");
@@ -115,21 +116,21 @@ public class AnalyticsBuilderTest {
   @Test
   public void invalidWriteKeyThrowsException() throws Exception {
     try {
-      new Builder(context, null);
+      new Builder(context, null, TRACK_ENDPOINT);
       fail("Null writeKey should throw exception.");
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage("writeKey must not be null or empty.");
     }
 
     try {
-      new Builder(context, "");
+      new Builder(context, "", TRACK_ENDPOINT);
       fail("Empty writeKey should throw exception.");
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage("writeKey must not be null or empty.");
     }
 
     try {
-      new Builder(context, "    ");
+      new Builder(context, "    ", TRACK_ENDPOINT);
       fail("Blank writeKey should throw exception.");
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage("writeKey must not be null or empty.");
@@ -167,21 +168,21 @@ public class AnalyticsBuilderTest {
   @Test
   public void invalidQueueSizeThrowsException() throws Exception {
     try {
-      new Builder(context, "foo").flushQueueSize(-1);
+      new Builder(context, "foo", TRACK_ENDPOINT).flushQueueSize(-1);
       fail("flushQueueSize < 0 should throw exception.");
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage("flushQueueSize must be greater than or equal to zero.");
     }
 
     try {
-      new Builder(context, "foo").flushQueueSize(0);
+      new Builder(context, "foo", TRACK_ENDPOINT).flushQueueSize(0);
       fail("flushQueueSize = 0 should throw exception.");
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage("flushQueueSize must be greater than or equal to zero.");
     }
 
     try {
-      new Builder(context, "foo").flushQueueSize(251);
+      new Builder(context, "foo", TRACK_ENDPOINT).flushQueueSize(251);
       fail("flushQueueSize = 251 should throw exception.");
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage("flushQueueSize must be less than or equal to 250.");
@@ -191,14 +192,14 @@ public class AnalyticsBuilderTest {
   @Test
   public void invalidFlushIntervalThrowsException() throws Exception {
     try {
-      new Builder(context, "foo").flushInterval(-1, TimeUnit.DAYS);
+      new Builder(context, "foo", TRACK_ENDPOINT).flushInterval(-1, TimeUnit.DAYS);
       fail("flushInterval < 0 should throw exception.");
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage("flushInterval must be greater than zero.");
     }
 
     try {
-      new Builder(context, "foo").flushInterval(1, null);
+      new Builder(context, "foo", TRACK_ENDPOINT).flushInterval(1, null);
       fail("null unit should throw exception.");
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage("timeUnit must not be null.");
@@ -208,7 +209,7 @@ public class AnalyticsBuilderTest {
   @Test
   public void invalidOptionsThrowsException() throws Exception {
     try {
-      new Builder(context, "foo").defaultOptions(null);
+      new Builder(context, "foo", TRACK_ENDPOINT).defaultOptions(null);
       fail("null options should throw exception.");
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage("defaultOptions must not be null.");
@@ -218,21 +219,21 @@ public class AnalyticsBuilderTest {
   @Test
   public void invalidTagThrowsException() throws Exception {
     try {
-      new Builder(context, "foo").tag(null);
+      new Builder(context, "foo", TRACK_ENDPOINT).tag(null);
       fail("Null tag should throw exception.");
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage("tag must not be null or empty.");
     }
 
     try {
-      new Builder(context, "foo").tag("");
+      new Builder(context, "foo", TRACK_ENDPOINT).tag("");
       fail("Empty tag should throw exception.");
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage("tag must not be null or empty.");
     }
 
     try {
-      new Builder(context, "foo").tag("    ");
+      new Builder(context, "foo", TRACK_ENDPOINT).tag("    ");
       fail("Blank tag should throw exception.");
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage("tag must not be null or empty.");
@@ -242,7 +243,7 @@ public class AnalyticsBuilderTest {
   @Test
   public void invalidLogLevelThrowsException() throws Exception {
     try {
-      new Builder(context, "foo").logLevel(null);
+      new Builder(context, "foo", TRACK_ENDPOINT).logLevel(null);
       fail("Setting null LogLevel should throw exception.");
     } catch (IllegalArgumentException expected) {
       assertThat(expected).hasMessage("LogLevel must not be null.");

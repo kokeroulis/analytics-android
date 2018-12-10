@@ -60,6 +60,7 @@ public class ClientTest {
   private Client client;
   private Client mockClient;
   @Private HttpURLConnection mockConnection;
+  private static final String TRACK_ENDPOINT = "https://wwww.customtrackendpoint.com/tracks";
 
   @Before
   public void setUp() {
@@ -67,7 +68,7 @@ public class ClientTest {
 
     client =
         new Client(
-            "foo",
+            "foo", TRACK_ENDPOINT,
             new ConnectionFactory() {
               @Override
               protected HttpURLConnection openConnection(String url) throws IOException {
@@ -79,7 +80,7 @@ public class ClientTest {
 
     mockClient =
         new Client(
-            "foo",
+            "foo",TRACK_ENDPOINT,
             new ConnectionFactory() {
               @Override
               protected HttpURLConnection openConnection(String url) throws IOException {

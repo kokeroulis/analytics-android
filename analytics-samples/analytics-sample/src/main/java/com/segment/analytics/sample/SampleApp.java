@@ -45,7 +45,7 @@ public class SampleApp extends Application {
 
     // Initialize a new instance of the Analytics client.
     Analytics.Builder builder =
-        new Analytics.Builder(this, ANALYTICS_WRITE_KEY, null)
+        new Analytics.Builder(this, ANALYTICS_WRITE_KEY, "https://wwww.customendpoint.com/tracks")
             .trackApplicationLifecycleEvents()
             .trackAttributionInformation()
             .recordScreenViews();
@@ -54,7 +54,7 @@ public class SampleApp extends Application {
     Analytics.setSingletonInstance(builder.build());
 
     // Now anytime you call Analytics.with, the custom instance will be returned.
-    Analytics analytics = Analytics.with(this, null);
+    Analytics analytics = Analytics.with(this);
 
     // If you need to know when integrations have been initialized, use the onIntegrationReady
     // listener.

@@ -101,6 +101,8 @@ public class AnalyticsTest {
           + "  }\n"
           + "}";
 
+
+  private static final String TRACK_ENDPOINT = "https://wwww.customtrackendpoint.com/tracks";
   @Mock Traits.Cache traitsCache;
   @Mock Options defaultOptions;
   @Spy AnalyticsNetworkExecutorService networkExecutor;
@@ -657,7 +659,8 @@ public class AnalyticsTest {
   public void shutdownDisallowedOnCustomSingletonInstance() throws Exception {
     Analytics.singleton = null;
     try {
-      Analytics analytics = new Analytics.Builder(RuntimeEnvironment.application, "foo").build();
+      Analytics analytics = new Analytics.Builder(RuntimeEnvironment.application, "foo",
+              TRACK_ENDPOINT).build();
       Analytics.setSingletonInstance(analytics);
       analytics.shutdown();
       fail("Calling shutdown() on static singleton instance should throw");
@@ -669,7 +672,8 @@ public class AnalyticsTest {
   public void setSingletonInstanceMayOnlyBeCalledOnce() {
     Analytics.singleton = null;
 
-    Analytics analytics = new Analytics.Builder(RuntimeEnvironment.application, "foo").build();
+    Analytics analytics = new Analytics.Builder(RuntimeEnvironment.application, "foo",
+            TRACK_ENDPOINT).build();
     Analytics.setSingletonInstance(analytics);
 
     try {
@@ -685,10 +689,12 @@ public class AnalyticsTest {
     Analytics.singleton = null;
 
     Analytics.setSingletonInstance(
-        new Analytics.Builder(RuntimeEnvironment.application, "foo") //
+        new Analytics.Builder(RuntimeEnvironment.application, "foo",
+                TRACK_ENDPOINT) //
             .build());
 
-    Analytics analytics = new Analytics.Builder(RuntimeEnvironment.application, "bar").build();
+    Analytics analytics = new Analytics.Builder(RuntimeEnvironment.application, "bar",
+            TRACK_ENDPOINT).build();
     try {
       Analytics.setSingletonInstance(analytics);
       fail("Can't set singleton instance after with().");
@@ -700,16 +706,19 @@ public class AnalyticsTest {
   @Test
   public void setSingleInstanceReturnedFromWith() {
     Analytics.singleton = null;
-    Analytics analytics = new Analytics.Builder(RuntimeEnvironment.application, "foo").build();
+    Analytics analytics = new Analytics.Builder(RuntimeEnvironment.application, "foo",
+            TRACK_ENDPOINT).build();
     Analytics.setSingletonInstance(analytics);
     assertThat(Analytics.with(RuntimeEnvironment.application)).isSameAs(analytics);
   }
 
   @Test
   public void multipleInstancesWithSameTagThrows() throws Exception {
-    new Analytics.Builder(RuntimeEnvironment.application, "foo").build();
+    new Analytics.Builder(RuntimeEnvironment.application, "foo",
+            TRACK_ENDPOINT).build();
     try {
-      new Analytics.Builder(RuntimeEnvironment.application, "bar").tag("foo").build();
+      new Analytics.Builder(RuntimeEnvironment.application, "bar",
+              TRACK_ENDPOINT).tag("foo").build();
       fail("Creating client with duplicate should throw.");
     } catch (IllegalStateException expected) {
       assertThat(expected) //
@@ -719,8 +728,10 @@ public class AnalyticsTest {
 
   @Test
   public void multipleInstancesWithSameTagIsAllowedAfterShutdown() throws Exception {
-    new Analytics.Builder(RuntimeEnvironment.application, "foo").build().shutdown();
-    new Analytics.Builder(RuntimeEnvironment.application, "bar").tag("foo").build();
+    new Analytics.Builder(RuntimeEnvironment.application, "foo",
+            TRACK_ENDPOINT).build().shutdown();
+    new Analytics.Builder(RuntimeEnvironment.application, "bar",
+            TRACK_ENDPOINT).tag("foo").build();
   }
 
   @Test

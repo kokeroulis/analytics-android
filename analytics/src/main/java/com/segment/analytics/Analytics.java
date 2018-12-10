@@ -107,6 +107,7 @@ public class Analytics {
       };
   @Private static final String OPT_OUT_PREFERENCE_KEY = "opt-out";
   static final String WRITE_KEY_RESOURCE_IDENTIFIER = "analytics_write_key";
+  static final String TRACK_ENDPOINT_RESOURCE_IDENTIFIER = "track_endpoint";
   static final List<String> INSTANCES = new ArrayList<>(1);
   /* This is intentional since we're only using the application context. */
   @SuppressLint("StaticFieldLeak")
@@ -160,7 +161,7 @@ public class Analytics {
    * <p>By default, events are uploaded every 30 seconds, or every 20 events (whichever occurs
    * first), and debugging is disabled.
    */
-  public static Analytics with(Context context, String trackEndpoint) {
+  public static Analytics with(Context context) {
     if (singleton == null) {
       if (context == null) {
         throw new IllegalArgumentException("Context must not be null.");
@@ -168,6 +169,7 @@ public class Analytics {
       synchronized (Analytics.class) {
         if (singleton == null) {
           String writeKey = getResourceString(context, WRITE_KEY_RESOURCE_IDENTIFIER);
+          String trackEndpoint = getResourceString(context, TRACK_ENDPOINT_RESOURCE_IDENTIFIER);
           Builder builder = new Builder(context, writeKey, trackEndpoint);
 
           try {
@@ -1106,6 +1108,9 @@ public class Analytics {
 
       if (isNullOrEmpty(writeKey)) {
         throw new IllegalArgumentException("writeKey must not be null or empty.");
+      }
+      if(isNullOrEmpty(trackEndPoint)){
+          throw new IllegalArgumentException("track endpoint should not be null or empty");
       }
       this.writeKey = writeKey;
       this.trackEndPoint = trackEndPoint;

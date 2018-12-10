@@ -45,7 +45,8 @@ import org.robolectric.annotation.Config;
 @Config(manifest = Config.NONE)
 public class MiddlewareTest {
 
-  Analytics.Builder builder;
+    private static final String TRACK_ENDPOINT = "https://wwww.customtrackendpoint.com/tracks";
+    Analytics.Builder builder;
 
   @Before
   public void setUp() {
@@ -53,7 +54,7 @@ public class MiddlewareTest {
     Analytics.INSTANCES.clear();
     grantPermission(RuntimeEnvironment.application, Manifest.permission.INTERNET);
     builder =
-        new Builder(RuntimeEnvironment.application, "write_key")
+        new Builder(RuntimeEnvironment.application, "write_key", TRACK_ENDPOINT)
             .executor(MoreExecutors.newDirectExecutorService());
   }
 
